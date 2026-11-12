@@ -8,6 +8,6 @@ package crm;
  *
  * @author 4rink
  */
-class rs {
+class PreparedStatement {
     
 }

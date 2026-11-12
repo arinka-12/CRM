@@ -18,6 +18,14 @@ public class One extends javax.swing.JFrame {
     public One() {
         initComponents();
         
+        java.net.URL imgURL = getClass().getResource("/logo/Logo Tokuemi2.png"); // Sesuaikan huruf besar/kecil nama file
+        if (imgURL != null) {
+            java.awt.Image icon = new javax.swing.ImageIcon(imgURL).getImage();
+            this.setIconImage(icon);
+        } else {
+            System.err.println("File gambar logo tidak ditemukan!");
+        }
+        
         jButton1.setFocusPainted(false);
         jButton2.setFocusPainted(false);
         jButton3.setFocusPainted(false);

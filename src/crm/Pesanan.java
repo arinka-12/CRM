@@ -23,12 +23,11 @@ public class Pesanan extends javax.swing.JInternalFrame {
      * Creates new form Pesanan
      */
     // === TEMPELKAN METHOD TAMPILKAN_DATA DI SINI ===
-    /*private void tampilkan_data() {
+    private void tampilkan_data() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("ID Pelanggan");
         model.addColumn("Tanggal Pesanan");
         model.addColumn("Sumber");
-        model.addColumn("Total Harga");
         try {
             String sql = "SELECT * FROM c_pesanan"; 
             koneksidatabase cn=new koneksidatabase();
@@ -39,16 +38,15 @@ public class Pesanan extends javax.swing.JInternalFrame {
             while(res.next()) {
                 model.addRow(new Object[]{
                     res.getString("id_pelanggan"),
-                    res.getString("tanggal_pesanan"),
+                    res.getString("Tanggal_pesanan"),
                     res.getString("sumber"),
-                    res.getString("total_harga")
                 });
             }
             jTable1.setModel(model); 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
         }
-    }*/
+    }
 
     // === TEMPELKAN METHOD BERSIHKAN_FORM DI SINI ===
     private void bersihkan_form() {
@@ -68,13 +66,13 @@ public class Pesanan extends javax.swing.JInternalFrame {
         java.sql.Statement st = conn.createStatement();
         
         // 3. Query untuk mengambil ID dan Nama Produk dari tabel produk Anda
-        String sql = "SELECT id_pelanggan, Nama_pelanggan FROM a_pelanggan";
+        String sql = "SELECT id_Pelanggan FROM a_pelanggan";
         java.sql.ResultSet rs = st.executeQuery(sql);
         
         // 4. Masukkan data ke dalam Combo Box looping baris demi baris
         while (rs.next()) {
             // Kita gabungkan ID dan Nama agar user tidak bingung saat memilih
-            String item = rs.getString("id_pelanggan");
+            String item = rs.getString("id_Pelanggan");
             jComboBox1.addItem(item);
             
         }
@@ -88,9 +86,23 @@ public class Pesanan extends javax.swing.JInternalFrame {
     public Pesanan() {
         initComponents();
         
+        jTable1.getTableHeader().setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                
+                c.setForeground(java.awt.Color.WHITE); 
+                c.setBackground(new java.awt.Color(66, 32, 16)); 
+                setHorizontalAlignment(javax.swing.SwingConstants.CENTER); 
+                return c;
+            }
+        });
+        
         ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
         this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         
+        tampilkan_data();
         bersihkan_form(); 
         
         id2();
@@ -110,12 +122,13 @@ public class Pesanan extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jButton6 = new javax.swing.JButton();
         jComboBox2 = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
 
         setBorder(null);
 
@@ -138,13 +151,6 @@ public class Pesanan extends javax.swing.JInternalFrame {
         jLabel4.setForeground(new java.awt.Color(115, 67, 15));
         jLabel4.setText("Sumber");
 
-        jButton2.setBackground(new java.awt.Color(157, 110, 17));
-        jButton2.setFont(new java.awt.Font("Book Antiqua", 1, 15)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/IMG_20261103_085539_1.png"))); // NOI18N
-        jButton2.setText("Cari");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
-
         jComboBox1.setBackground(new java.awt.Color(240, 218, 174));
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -158,10 +164,23 @@ public class Pesanan extends javax.swing.JInternalFrame {
         jButton6.addActionListener(this::jButton6ActionPerformed);
 
         jComboBox2.setBackground(new java.awt.Color(240, 218, 174));
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "WA", "Grab", "Gojek" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "WhatsApp", "Grab", "Gojek" }));
         jComboBox2.addActionListener(this::jComboBox2ActionPerformed);
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/IMG_20261102_221041.png"))); // NOI18N
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -180,12 +199,9 @@ public class Pesanan extends javax.swing.JInternalFrame {
                             .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(27, 27, 27)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton2))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
@@ -193,6 +209,10 @@ public class Pesanan extends javax.swing.JInternalFrame {
                                     .addComponent(jButton6))))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 357, Short.MAX_VALUE)
                 .addComponent(jLabel7))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(58, 58, 58)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,8 +226,7 @@ public class Pesanan extends javax.swing.JInternalFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel2)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton2))
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3)
@@ -220,7 +239,9 @@ public class Pesanan extends javax.swing.JInternalFrame {
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jButton6)
-                .addContainerGap(488, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(338, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -241,53 +262,11 @@ public class Pesanan extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    DefaultTableModel model = new DefaultTableModel();
-    model.addColumn("ID Pelanggan");
-    model.addColumn("Tanggal Pesanan");
-    model.addColumn("Sumber");
-    model.addColumn("Total Harga");
-    
-    // Ambil kata kunci dari TextField pencarian Anda (misal namanya txtCari)
-    String keyword = jButton2.getText();
-    
-    try {
-        // Query SQL menggunakan LIKE untuk mencari data yang mirip/mengandung kata kunci
-        String sql = "SELECT * FROM c_pesanan WHERE "
-                   + "id_pelanggan LIKE '%" + keyword + "%' OR "
-                   + "tanggal_pesanan LIKE '%" + keyword + "%' OR "
-                   + "sumber LIKE '%" + keyword + "%' OR "
-                   + "total_harga LIKE '%" + keyword + "%'";
-        
-        // Pola koneksi disesuaikan dengan contoh Anda
-        koneksidatabase cn = new koneksidatabase();
-        cn.koneksi22();
-        java.sql.Connection conn = koneksidatabase.con;
-        java.sql.Statement stm = conn.createStatement();
-        java.sql.ResultSet res = stm.executeQuery(sql);
-        
-        while(res.next()) {
-            model.addRow(new Object[]{
-                res.getString("id_pelanggan"),
-                res.getDate("tanggal_pesanan"),
-                res.getString("sumber"),
-                res.getString("total_harga")
-            });
-        }
-        //jTable1.setModel(model); 
-        
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Pencarian gagal: " + e.getMessage());
-    }
-    }//GEN-LAST:event_jButton2ActionPerformed
-
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
          try {
         String idPelanggan = jComboBox1.getSelectedItem().toString(); // atau .getText() jika TextField
         java.util.Date tanggal = jDateChooser1.getDate();
-        java.sql.Timestamp tanggal1 = new java.sql.Timestamp(tanggal.getTime());
         String sumber = jComboBox2.getSelectedItem().toString();
     
             crm.Detail f2 = new crm.Detail(idPelanggan, tanggal, sumber);
@@ -313,7 +292,6 @@ public class Pesanan extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton6;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
@@ -324,5 +302,7 @@ public class Pesanan extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }

@@ -100,7 +100,7 @@ public class dashboard extends javax.swing.JInternalFrame {
             koneksidatabase cn=new koneksidatabase();
             cn.koneksi22();
             java.sql.Connection conn=koneksidatabase.con;
-            String sql = "SELECT COUNT(*) FROM detail_pesanan";
+            String sql = "SELECT COUNT(*) c_pesanan";
             java.sql.PreparedStatement pst = conn.prepareStatement(sql);
             java.sql.ResultSet rs = pst.executeQuery();
             if (rs.next()) {
@@ -136,58 +136,62 @@ public class dashboard extends javax.swing.JInternalFrame {
     private void tampilkanPesananTerbaru() {
         DefaultTableModel model = new DefaultTableModel();
 
-        model.addColumn("No");
-        model.addColumn("ID Pesanan");
-        model.addColumn("Pelanggan");
-        model.addColumn("Tanggal");
-        model.addColumn("Total");
-        model.addColumn("Status");
+    model.addColumn("No");
+    model.addColumn("ID Pesanan");
+    model.addColumn("Pelanggan");
+    model.addColumn("Tanggal");
+    model.addColumn("Total");
+    model.addColumn("Status");
 
-        try {
-            String sql = "SELECT "
-                + "t.id_transaksi, "
+    try {
+        String sql = "SELECT "
+                + "c.id_pesanan, "
                 + "a.Nama_Pelanggan, "
-                + "MAX(NULLIF(d.tanggal_pesanan, '0000-00-00 00:00:00')) AS tanggal_pesanan, "
-                + "t.Total_harga, "
-                + "t.Status_pembayaran "
-                + "FROM transaksi t "
-                + "JOIN detail_pesanan d "
-                + "ON t.id_transaksi = d.id_transaksi "
+                + "c.Tanggal_pesanan, "
+                + "COALESCE(t.Total_harga, 0) AS Total_harga, "
+                + "COALESCE(t.Status_pembayaran, 'Belum Bayar') AS Status_pembayaran "
+                + "FROM c_pesanan c "
                 + "JOIN a_pelanggan a "
-                + "ON d.id_Pelanggan = a.id_Pelanggan "
-                + "GROUP BY t.id_transaksi, "
-                + "a.Nama_Pelanggan, "
-                + "t.Total_harga, "
-                + "t.Status_pembayaran "
-                + "ORDER BY tanggal_pesanan DESC";
-            koneksidatabase cn=new koneksidatabase();
-            cn.koneksi22();
-            java.sql.Connection conn=koneksidatabase.con;
-            PreparedStatement pst = conn.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
-            int no = 1;
-            while (rs.next()) {
-                Object[] data = {
-                    no++,
-                    rs.getString("id_transaksi"),
-                    rs.getString("Nama_Pelanggan"),
-                    rs.getString("tanggal_pesanan"),
-                    rs.getBigDecimal("Total_harga"),
-                    rs.getString("Status_pembayaran")
-                };
+                + "ON c.id_pelanggan = a.id_pelanggan "
+                + "LEFT JOIN transaksi t "
+                + "ON c.id_pesanan = t.id_pesanan "
+                + "ORDER BY c.Tanggal_pesanan DESC";
 
-                model.addRow(data);
-            }
-            jTable1.setModel(model);
-            rs.close();
-            pst.close();
-            conn.close();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Gagal menampilkan pesanan: " + e.getMessage()
-            );
+        koneksidatabase cn = new koneksidatabase();
+        cn.koneksi22();
+
+        java.sql.Connection conn = koneksidatabase.con;
+
+        PreparedStatement pst = conn.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+
+        int no = 1;
+
+        while (rs.next()) {
+            Object[] data = {
+                no++,
+                rs.getString("id_pesanan"),
+                rs.getString("Nama_Pelanggan"),
+                rs.getString("Tanggal_pesanan"),
+                rs.getBigDecimal("Total_harga"),
+                rs.getString("Status_pembayaran")
+            };
+
+            model.addRow(data);
         }
+
+        jTable1.setModel(model);
+
+        rs.close();
+        pst.close();
+        conn.close();
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Gagal menampilkan pesanan: " + e.getMessage()
+        );
+    }
     }
 
     /**

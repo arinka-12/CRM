@@ -6,12 +6,13 @@
             <file>file:/C:/CRM/src/crm/Pelanggan.java</file>
             <file>file:/C:/CRM/src/crm/Produk.java</file>
             <file>file:/C:/CRM/src/crm/Pesanan.java</file>
-            <file>file:/C:/CRM/src/crm/Trans.java</file>
             <file>file:/C:/CRM/src/crm/Detail.java</file>
+            <file>file:/C:/CRM/src/crm/One.java</file>
+            <file>file:/C:/CRM/src/crm/Trans.java</file>
             <file>file:/C:/CRM/src/crm/dashboard.java</file>
             <file>file:/C:/CRM/src/crm/RoundedPanel.java</file>
-            <file>file:/C:/CRM/src/crm/One.java</file>
-            <file>file:/C:/CRM/src/crm/rs.java</file>
+            <file>file:/C:/CRM/src/crm/CRM.java</file>
+            <file>file:/C:/CRM/src/crm/PreparedStatement.java</file>
         </group>
     </open-files>
 </project-private>

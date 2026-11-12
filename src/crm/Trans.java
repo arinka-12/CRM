@@ -59,9 +59,9 @@ public class Trans extends javax.swing.JInternalFrame {
     java.util.Calendar cal = java.util.Calendar.getInstance();
     java.sql.Timestamp sqlAkhir = new java.sql.Timestamp(cal.getTimeInMillis()); // Waktu sekarang (Hari ini)
     
-    if (periodePilihan.equals("Per Minggu")) {
+    if (periodePilihan.equals("Perminggu")) {
         cal.add(java.util.Calendar.DAY_OF_YEAR, -7); // Mundur 7 hari
-    } else if (periodePilihan.equals("Per Bulan")) {
+    } else if (periodePilihan.equals("Pernulan")) {
         cal.add(java.util.Calendar.MONTH, -1); // Mundur 1 bulan
     }
     
@@ -77,12 +77,11 @@ public class Trans extends javax.swing.JInternalFrame {
         koneksidatabase cn = new koneksidatabase();
         cn.koneksi22();
         java.sql.Connection conn = koneksidatabase.con;
-        
-        String sql = "SELECT t.id_transaksi, d.id_Pelanggan, d.tanggal_pesanan, t.Metode_pembayaran, t.Status_pembayaran, t.Total_harga " +
-                     "FROM transaksi t " +
-                     "JOIN detail_pesanan d ON t.id_transaksi = d.id_transaksi " +
-                     "WHERE d.tanggal_pesanan BETWEEN ? AND ? " +
-                     "ORDER BY d.tanggal_pesanan DESC";
+        String sql = "SELECT t.id_transaksi, c.id_pelanggan, c.Tanggal_pesanan, t.Metode_Pembayaran, t.Status_pembayaran, t.Total_harga " +
+             "FROM transaksi t " +
+             "JOIN c_pesanan c ON t.id_pesanan = c.id_pesanan " +
+             "WHERE c.Tanggal_pesanan BETWEEN ? AND ? " +
+             "ORDER BY c.Tanggal_pesanan DESC";
                      
         java.sql.PreparedStatement ps = conn.prepareStatement(sql);
         ps.setTimestamp(1, sqlAwal);
@@ -93,7 +92,7 @@ public class Trans extends javax.swing.JInternalFrame {
         while (rs.next()) {
             String idTrx = rs.getString("id_transaksi");
             String idPel = rs.getString("id_Pelanggan");
-            java.sql.Timestamp tgl = rs.getTimestamp("tanggal_pesanan");
+            java.sql.Timestamp tgl = rs.getTimestamp("Tanggal_pesanan");
             String metode = rs.getString("Metode_pembayaran");
             String status = rs.getString("Status_pembayaran");
             int totalHarga = rs.getInt("Total_harga");
@@ -181,6 +180,7 @@ public class Trans extends javax.swing.JInternalFrame {
 
         jComboBox2.setBackground(new java.awt.Color(240, 218, 174));
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Pilih Periode--", "Perminggu", "Perbulan" }));
+        jComboBox2.addActionListener(this::jComboBox2ActionPerformed);
 
         jLabel5.setBackground(new java.awt.Color(157, 110, 17));
         jLabel5.setFont(new java.awt.Font("Book Antiqua", 1, 14)); // NOI18N
@@ -262,6 +262,10 @@ public class Trans extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
         Laporan();
     }//GEN-LAST:event_btnCariActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
