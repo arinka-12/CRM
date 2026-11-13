@@ -28,7 +28,7 @@ public class Detail extends javax.swing.JInternalFrame {
     private String strukHarga;
     private int strukTotalBayar;
     private String strukIdTransaksi;
-
+        
     /**
      * Creates new form Detail
      */
@@ -965,9 +965,40 @@ public class Detail extends javax.swing.JInternalFrame {
         }
         // 8. SIMPAN SEMUA DATA
         conn.commit();
-        // 9. Menyimpan data untuk cetak struk
-        this.strukIdTransaksi = String.valueOf(idPesanan);
+       // 9. Menyimpan data untuk cetak struk
+        String gabungIdProduk = "";
+        String gabungNamaProduk = "";
+        String gabungJumlah = "";
+        String gabungHarga = "";
+        for (int i = 0; i < totalBaris; i++) {
+            String idProduk = txttabel.getValueAt(i, 0).toString();
+            String namaProduk = txttabel.getValueAt(i, 1).toString();
+            String jumlah = txttabel.getValueAt(i, 2).toString();
+            int subtotal = Integer.parseInt(
+                txttabel.getValueAt(i, 3).toString()
+            );
+            int hargaSatuan = subtotal / Integer.parseInt(jumlah);
+            if (i > 0) {
+                gabungIdProduk += ", ";
+                gabungNamaProduk += ", ";
+                gabungJumlah += ", ";
+                gabungHarga += ", ";
+            }
+            gabungIdProduk += idProduk;
+            gabungNamaProduk += namaProduk;
+            gabungJumlah += jumlah;
+            gabungHarga += hargaSatuan;
+        }
+        this.strukIdProduk = gabungIdProduk;
+        this.strukNamaProduk = gabungNamaProduk;
+        this.strukJumlah = gabungJumlah;
+        this.strukHarga = gabungHarga;
         this.strukTotalBayar = totalHarga;
+        // ID transaksi yang dibuat saat penyimpanan
+        this.strukIdTransaksi = nominalBayar > 0
+                ? idTransaksiUnik
+                : "PESANAN-" + idPesanan;
+        
         JOptionPane.showMessageDialog(this,
             "Pesanan berhasil disimpan!\n\n" +
             "ID Pesanan: " + idPesanan +
@@ -1100,8 +1131,13 @@ public class Detail extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void txtcari1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcari1ActionPerformed
-    if (this.strukIdProduk == null || this.strukIdProduk.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Belum ada data transaksi yang diproses atau keranjang kosong!");
+    
+        if (strukIdProduk == null || strukIdProduk.isEmpty()
+        || strukNamaProduk == null || strukNamaProduk.isEmpty()
+        || strukJumlah == null || strukJumlah.isEmpty()
+        || strukHarga == null || strukHarga.isEmpty()) {
+    JOptionPane.showMessageDialog(this,
+            "Belum ada data pesanan yang disimpan!");
     return;
     }
 
@@ -1148,7 +1184,10 @@ public class Detail extends javax.swing.JInternalFrame {
         outputStream.write(TEXT_BOLD_OFF);
         
         // --- DAFTAR BARANG (TATA LETAK SEPERTI CONTOH GAMBAR) ---
-        int barisData = Math.min(arrayProduk.length, Math.min(arrayJumlah.length, arrayHarga.length));
+        int barisData = Math.min(
+        Math.min(arrayProduk.length, arrayNamaProduk.length),
+        Math.min(arrayJumlah.length, arrayHarga.length)
+);
 
         for (int i = 0; i < barisData; i++) {
             // 1. Nama barang dicetak di baris pertama (Rata Kiri)
@@ -1179,7 +1218,7 @@ public class Detail extends javax.swing.JInternalFrame {
         // --- TOTAL PEMBAYARAN ---
         outputStream.write(ALIGN_RIGHT);
         outputStream.write(TEXT_BOLD_ON);
-        String totalStr = "TOTAL BAYAR : Rp " + this.strukTotalBayar + "\n";
+        String totalStr = "TOTAL BAYAR : Rp "+ String.format("%,d", this.strukTotalBayar).replace(',', '.')+ "\n";
         outputStream.write(totalStr.getBytes("CP437"));
         outputStream.write(TEXT_BOLD_OFF);
 
@@ -1201,9 +1240,12 @@ public class Detail extends javax.swing.JInternalFrame {
         outputStream.write(BARCODE_TEXT);
         outputStream.write(BARCODE_PRINT);
 
-       
-        String dataBarcode = (this.strukIdTransaksi != null && !this.strukIdTransaksi .isEmpty()) ? this.strukIdTransaksi  : "TRX-UNKNOWN";
-        outputStream.write((dataBarcode.trim() + "*").getBytes("CP437")); 
+        String dataBarcode = (this.strukIdTransaksi != null
+        && !this.strukIdTransaksi.isEmpty())
+        ? this.strukIdTransaksi
+        : "TRX-UNKNOWN";
+
+        outputStream.write((dataBarcode.trim() + "*").getBytes("CP437"));
         outputStream.write(0x00);
 
         // Umpan kertas kosong ke atas dan potong otomatis
@@ -1248,8 +1290,7 @@ public class Detail extends javax.swing.JInternalFrame {
     } catch (javax.print.PrintException e) {
         JOptionPane.showMessageDialog(this, "Gagal mengirim data cetak ke hardware:\n" + e.getMessage());
     }
-
-        
+              
         
     /*if (this.strukIdProduk == null || this.strukIdProduk.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Belum ada data transaksi yang diproses atau keranjang kosong!");
