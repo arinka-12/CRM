@@ -37,7 +37,7 @@ public class KalenderRange extends JDialog {
 
     public KalenderRange(Window parent) {
         super(parent, "Kalender", Dialog.ModalityType.APPLICATION_MODAL);
-        setSize(350, 400);
+        setSize(400, 420);
         setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(new Color(235, 235, 235));
 

@@ -22,8 +22,10 @@ public class Trans extends javax.swing.JInternalFrame {
     public Trans() {
         initComponents();
         
+      
         ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
         this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        
         
         txtTabel.getTableHeader().setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
             @Override
@@ -61,14 +63,29 @@ public class Trans extends javax.swing.JInternalFrame {
     // 1. Kalkulasi tanggal hari ini dan hitung mundur otomatis
     java.util.Calendar cal = java.util.Calendar.getInstance();
     java.sql.Timestamp sqlAkhir = new java.sql.Timestamp(cal.getTimeInMillis()); // Waktu sekarang (Hari ini)
+    java.sql.Timestamp sqlAwal = null;
     
     if (periodePilihan.equals("Perminggu")) {
         cal.add(java.util.Calendar.DAY_OF_YEAR, -7); // Mundur 7 hari
-    } else if (periodePilihan.equals("Pernulan")) {
+        sqlAwal = new java.sql.Timestamp(cal.getTimeInMillis());
+    } else if (periodePilihan.equals("Perbulan")) {
         cal.add(java.util.Calendar.MONTH, -1); // Mundur 1 bulan
+        sqlAwal = new java.sql.Timestamp(cal.getTimeInMillis());
+    }else if (periodePilihan.equals("Pilih Tanggal")){
+        if (tanggalMulai == null || tanggalAkhir == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih rentang tanggal terlebih dahulu melalui tombol Tanggal!");
+            btnTanggal.requestFocus();
+            return;
+        }
+        // Konversi LocalDate ke Timestamp (awal hari 00:00:00 s/d akhir hari 23:59:59)
+        sqlAwal = java.sql.Timestamp.valueOf(tanggalMulai.atStartOfDay());
+        sqlAkhir = java.sql.Timestamp.valueOf(tanggalAkhir.atTime(23, 59, 59));
+        
+    } else {
+        return;
     }
     
-    java.sql.Timestamp sqlAwal = new java.sql.Timestamp(cal.getTimeInMillis()); // Waktu awal hasil mundur
+     // Waktu awal hasil mundur
     
     DefaultTableModel model = (DefaultTableModel) txtTabel.getModel();
     model.setRowCount(0); // Kosongkan baris tabel sebelum data baru masuk
@@ -155,8 +172,9 @@ public class Trans extends javax.swing.JInternalFrame {
 
         jLabel2.setFont(new java.awt.Font("Baskerville Old Face", 0, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("ID Pesanan");
+        jLabel2.setText("Rentan Laporan");
 
+        txtTabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtTabel.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -168,6 +186,8 @@ public class Trans extends javax.swing.JInternalFrame {
                 "ID Transaksi", "ID Pesanan", "Tanggal", "Metode", "Total Harga", "Status"
             }
         ));
+        txtTabel.setRowHeight(32);
+        txtTabel.setSurrendersFocusOnKeystroke(true);
         jScrollPane1.setViewportView(txtTabel);
 
         txtJudul.setFont(new java.awt.Font("Berlin Sans FB Demi", 1, 24)); // NOI18N
@@ -183,7 +203,7 @@ public class Trans extends javax.swing.JInternalFrame {
         btnCari.addActionListener(this::btnCariActionPerformed);
 
         jComboBox2.setBackground(new java.awt.Color(240, 218, 174));
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Pilih Periode--", "Perminggu", "Perbulan" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Pilih Periode--", "Pilih Tanggal", "Perminggu", "Perbulan" }));
         jComboBox2.addActionListener(this::jComboBox2ActionPerformed);
 
         jLabel5.setBackground(new java.awt.Color(157, 110, 17));
@@ -195,7 +215,7 @@ public class Trans extends javax.swing.JInternalFrame {
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/IMG_20261102_221041.png"))); // NOI18N
 
-        btnTanggal.setText("jButton1");
+        btnTanggal.setText("Pilih Tanggal");
         btnTanggal.addActionListener(this::btnTanggalActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -206,25 +226,28 @@ public class Trans extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(36, 36, 36)
-                        .addComponent(txtJudul))
+                        .addComponent(txtJudul)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 648, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(87, 87, 87)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
+                                .addComponent(jLabel2)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addGap(41, 41, 41)
-                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnTanggal)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnCari))))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                                .addComponent(btnCari)
+                                .addGap(101, 101, 101))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addComponent(jLabel7))
         );
         jPanel1Layout.setVerticalGroup(
@@ -241,13 +264,13 @@ public class Trans extends javax.swing.JInternalFrame {
                             .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnTanggal))
                         .addGap(33, 33, 33)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel7))
-                .addGap(26, 26, 26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addContainerGap())
+                .addContainerGap(277, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -275,6 +298,12 @@ public class Trans extends javax.swing.JInternalFrame {
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         // TODO add your handling code here:
+        String pilihan = jComboBox2.getSelectedItem().toString();
+    if (!pilihan.equals("Pilih Tanggal")) {
+        tanggalMulai = null;
+        tanggalAkhir = null;
+        btnTanggal.setText("Pilih Tanggal");
+    }
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
     private void btnTanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTanggalActionPerformed
@@ -288,7 +317,7 @@ public class Trans extends javax.swing.JInternalFrame {
             tanggalMulai = kal.getTglMulai();
             tanggalAkhir = kal.getTglAkhir();
             btnTanggal.setText(tanggalMulai + " s/d " + tanggalAkhir);
-            jComboBox2.setSelectedIndex(0);
+            jComboBox2.setSelectedItem("Pilih Tanggal");
         }
     }//GEN-LAST:event_btnTanggalActionPerformed
 

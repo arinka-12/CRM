@@ -124,9 +124,9 @@
                       </Group>
                   </Group>
                   <Component id="jButton6" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="142" max="-2" attributes="0"/>
-                  <EmptySpace pref="338" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" min="-2" pref="247" max="-2" attributes="0"/>
+                  <EmptySpace pref="227" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -265,6 +265,8 @@
                     <Column editable="true" title="Title 4" type="java.lang.Object"/>
                   </Table>
                 </Property>
+                <Property name="rowHeight" type="int" value="32"/>
+                <Property name="surrendersFocusOnKeystroke" type="boolean" value="true"/>
               </Properties>
             </Component>
           </SubComponents>
