@@ -185,7 +185,7 @@ public class Trans extends javax.swing.JInternalFrame {
         jLabel5.setBackground(new java.awt.Color(157, 110, 17));
         jLabel5.setFont(new java.awt.Font("Book Antiqua", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText(" TOTAL OMZET");
+        jLabel5.setText(" TOTAL");
         jLabel5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabel5.setOpaque(true);
 
