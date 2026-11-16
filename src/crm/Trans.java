@@ -11,10 +11,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 
 
 public class Trans extends javax.swing.JInternalFrame {
     
+    private LocalDate tanggalMulai = null;
+    private LocalDate tanggalAkhir = null;
     
     public Trans() {
         initComponents();
@@ -141,6 +144,7 @@ public class Trans extends javax.swing.JInternalFrame {
         jComboBox2 = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        btnTanggal = new javax.swing.JButton();
 
         jTextField6.setText("jTextField6");
 
@@ -191,6 +195,9 @@ public class Trans extends javax.swing.JInternalFrame {
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/IMG_20261102_221041.png"))); // NOI18N
 
+        btnTanggal.setText("jButton1");
+        btnTanggal.addActionListener(this::btnTanggalActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -213,7 +220,9 @@ public class Trans extends javax.swing.JInternalFrame {
                                     .addComponent(jLabel2)
                                     .addGap(41, 41, 41)
                                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(82, 82, 82)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnTanggal)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(btnCari))))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
                 .addComponent(jLabel7))
@@ -229,7 +238,8 @@ public class Trans extends javax.swing.JInternalFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(btnCari)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnTanggal))
                         .addGap(33, 33, 33)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel7))
@@ -267,9 +277,25 @@ public class Trans extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
+    private void btnTanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTanggalActionPerformed
+        // TODO add your handling code here:
+        java.awt.Window parentWindow = javax.swing.SwingUtilities.getWindowAncestor(this);
+        KalenderRange kal = new KalenderRange(parentWindow);
+        kal.setLocationRelativeTo(btnTanggal);
+        kal.setVisible(true);
+
+        if (kal.isDikonfirmasi()) {
+            tanggalMulai = kal.getTglMulai();
+            tanggalAkhir = kal.getTglAkhir();
+            btnTanggal.setText(tanggalMulai + " s/d " + tanggalAkhir);
+            jComboBox2.setSelectedIndex(0);
+        }
+    }//GEN-LAST:event_btnTanggalActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
+    private javax.swing.JButton btnTanggal;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
