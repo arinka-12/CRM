@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
  */
 package crm;
+import java.awt.Color;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
@@ -40,20 +41,82 @@ public class Trans extends javax.swing.JInternalFrame {
                 return c;
             }
         });
+        aturHeaderTabel();
+        aturscroll();
         
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("ID Transaksi");
-        model.addColumn("ID Pelanggan");
-        model.addColumn("Tanggal");
-        model.addColumn("Metode");
-        model.addColumn("Status");
-        model.addColumn("Total Belanja (Rp)");
-        txtTabel.setModel(model);
+        DefaultTableModel model = (DefaultTableModel) txtTabel.getModel();
+        model.setRowCount(0);
     }
 
+    private void aturHeaderTabel() {
+        txtTabel.getTableHeader().setDefaultRenderer(
+            new RoundedHeaderRenderer());
+        txtTabel.getTableHeader().setPreferredSize(
+            new java.awt.Dimension(0, 40));
+        txtTabel.getTableHeader().setReorderingAllowed(false);
+
+            // 1. Hapus border luar JScrollPane dan Viewport
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder());
+
+        // 2. Hilangkan border bawaan JTableHeader
+        txtTabel.getTableHeader().setBorder(javax.swing.BorderFactory.createEmptyBorder());
+
+        // 3. Samakan warna kotak kecil di pojok kanan atas (di atas scrollbar)
+        javax.swing.JPanel corner = new javax.swing.JPanel();
+        corner.setBackground(new Color(178, 131, 59)); // Sesuaikan dengan warna RGB panel luar
+        jScrollPane1.setCorner(javax.swing.JScrollPane.UPPER_RIGHT_CORNER, corner);
+    }
+    
+    private javax.swing.JPanel buatSudut(java.awt.Color warna) {
+    javax.swing.JPanel panel = new javax.swing.JPanel();
+    panel.setBackground(warna);
+    return panel;
+    }
+    
+    private void aturscroll() {
+        jScrollPane1.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
+        @Override
+        protected void configureScrollBarColors() {
+            this.thumbColor = new java.awt.Color(115, 67, 15); // Cokelat tua
+            this.trackColor = new java.awt.Color(255, 253, 217); // Krem lembut
+        }
+        // Menggambar batang geser (thumb) dengan sudut melengkung
+        @Override
+        protected void paintThumb(java.awt.Graphics g, javax.swing.JComponent c, java.awt.Rectangle thumbBounds) {
+            if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
+                return;
+            }
+            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(thumbColor);
+            // Beri jarak 2px di kiri & kanan agar terlihat mengambang rapi di dalam jalur krem
+            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2, thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
+            g2.dispose();
+        }
+        // Menghilangkan tombol panah atas dan bawah
+        @Override
+        protected javax.swing.JButton createDecreaseButton(int orientation) {
+            return createZeroButton();
+        }
+        @Override
+        protected javax.swing.JButton createIncreaseButton(int orientation) {
+            return createZeroButton();
+        }
+        private javax.swing.JButton createZeroButton() {
+            javax.swing.JButton button = new javax.swing.JButton();
+            button.setPreferredSize(new java.awt.Dimension(0, 0));
+            button.setMinimumSize(new java.awt.Dimension(0, 0));
+            button.setMaximumSize(new java.awt.Dimension(0, 0));
+            return button;
+        }
+    });
+    // Lebar jalur scrollbar 12px agar batang geser melengkungnya proporsional
+    jScrollPane1.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(12, 0));
+    }
+    
     void Laporan() {
     String periodePilihan = jComboBox2.getSelectedItem().toString();
-    
     // Validasi jika user lupa memilih periode
     if (periodePilihan.equals("-- Pilih Periode --")) {
         javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih periode laporan terlebih dahulu!");
@@ -62,15 +125,15 @@ public class Trans extends javax.swing.JInternalFrame {
     
     // 1. Kalkulasi tanggal hari ini dan hitung mundur otomatis
     java.util.Calendar cal = java.util.Calendar.getInstance();
-    java.sql.Timestamp sqlAkhir = new java.sql.Timestamp(cal.getTimeInMillis()); // Waktu sekarang (Hari ini)
-    java.sql.Timestamp sqlAwal = null;
+    java.sql.Date sqlAkhir = new java.sql.Date(cal.getTimeInMillis()); // Waktu sekarang (Hari ini)
+    java.sql.Date sqlAwal = null;
     
     if (periodePilihan.equals("Perminggu")) {
         cal.add(java.util.Calendar.DAY_OF_YEAR, -7); // Mundur 7 hari
-        sqlAwal = new java.sql.Timestamp(cal.getTimeInMillis());
+        sqlAwal = new java.sql.Date(cal.getTimeInMillis());
     } else if (periodePilihan.equals("Perbulan")) {
         cal.add(java.util.Calendar.MONTH, -1); // Mundur 1 bulan
-        sqlAwal = new java.sql.Timestamp(cal.getTimeInMillis());
+        sqlAwal = new java.sql.Date(cal.getTimeInMillis());
     }else if (periodePilihan.equals("Pilih Tanggal")){
         if (tanggalMulai == null || tanggalAkhir == null) {
             javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih rentang tanggal terlebih dahulu melalui tombol Tanggal!");
@@ -78,8 +141,8 @@ public class Trans extends javax.swing.JInternalFrame {
             return;
         }
         // Konversi LocalDate ke Timestamp (awal hari 00:00:00 s/d akhir hari 23:59:59)
-        sqlAwal = java.sql.Timestamp.valueOf(tanggalMulai.atStartOfDay());
-        sqlAkhir = java.sql.Timestamp.valueOf(tanggalAkhir.atTime(23, 59, 59));
+        sqlAwal = java.sql.Date.valueOf(tanggalMulai);
+        sqlAkhir = java.sql.Date.valueOf(tanggalAkhir);
         
     } else {
         return;
@@ -97,28 +160,31 @@ public class Trans extends javax.swing.JInternalFrame {
         koneksidatabase cn = new koneksidatabase();
         cn.koneksi22();
         java.sql.Connection conn = koneksidatabase.con;
-        String sql = "SELECT t.id_transaksi, c.id_pelanggan, c.Tanggal_pesanan, t.Metode_Pembayaran, t.Status_pembayaran, t.Total_harga " +
+        
+        String sql = "SELECT t.id_transaksi, c.id_pelanggan, a.Nama_Pelanggan, t.Tanggalbayar, t.Metode_Pembayaran, t.Status_pembayaran, t.Total_harga " +
              "FROM transaksi t " +
-             "JOIN c_pesanan c ON t.id_pesanan = c.id_pesanan " +
-             "WHERE c.Tanggal_pesanan BETWEEN ? AND ? " +
-             "ORDER BY c.Tanggal_pesanan DESC";
+             "LEFT JOIN c_pesanan c ON t.id_pesanan = c.id_pesanan " +
+             "LEFT JOIN a_pelanggan a ON c.id_Pelanggan = a.id_Pelanggan " +
+             "WHERE t.Tanggalbayar BETWEEN ? AND ? " +
+             "ORDER BY t.Tanggalbayar DESC";
                      
         java.sql.PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setTimestamp(1, sqlAwal);
-        ps.setTimestamp(2, sqlAkhir);
+        ps.setDate(1, sqlAwal);
+        ps.setDate(2, sqlAkhir);
         
         java.sql.ResultSet rs = ps.executeQuery();
         
         while (rs.next()) {
             String idTrx = rs.getString("id_transaksi");
-            String idPel = rs.getString("id_Pelanggan");
-            java.sql.Timestamp tgl = rs.getTimestamp("Tanggal_pesanan");
+            String idPel = rs.getString("id_Pelanggan") != null ? rs.getString("id_Pelanggan") : "-";
+            String namaPel = rs.getString("Nama_Pelanggan") != null ? rs.getString("Nama_Pelanggan") : "-";
+            java.sql.Date tglBayar = rs.getDate("Tanggalbayar");
             String metode = rs.getString("Metode_pembayaran");
             String status = rs.getString("Status_pembayaran");
             int totalHarga = rs.getInt("Total_harga");
             
             // Masukkan data rangkuman ke baris JTable
-            model.addRow(new Object[]{idTrx, idPel, tgl, metode, status, totalHarga});
+            model.addRow(new Object[]{idTrx, idPel, namaPel, tglBayar, metode, status, totalHarga});
             
             // Jumlahkan total uang masuk
             akumulasiOmzet += totalHarga;
@@ -153,8 +219,6 @@ public class Trans extends javax.swing.JInternalFrame {
         buttonGroup3 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtTabel = new javax.swing.JTable();
         txtJudul = new javax.swing.JLabel();
         btnCari = new javax.swing.JButton();
         txtTotalOmzet = new javax.swing.JTextField();
@@ -162,6 +226,9 @@ public class Trans extends javax.swing.JInternalFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         btnTanggal = new javax.swing.JButton();
+        jPanel2 = new crm.RoundedPanel(20)  ;
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtTabel = new javax.swing.JTable();
 
         jTextField6.setText("jTextField6");
 
@@ -173,22 +240,6 @@ public class Trans extends javax.swing.JInternalFrame {
         jLabel2.setFont(new java.awt.Font("Baskerville Old Face", 0, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Rentan Laporan");
-
-        txtTabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtTabel.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "ID Transaksi", "ID Pesanan", "Tanggal", "Metode", "Total Harga", "Status"
-            }
-        ));
-        txtTabel.setRowHeight(32);
-        txtTabel.setSurrendersFocusOnKeystroke(true);
-        jScrollPane1.setViewportView(txtTabel);
 
         txtJudul.setFont(new java.awt.Font("Berlin Sans FB Demi", 1, 24)); // NOI18N
         txtJudul.setForeground(new java.awt.Color(115, 67, 15));
@@ -203,6 +254,7 @@ public class Trans extends javax.swing.JInternalFrame {
         btnCari.addActionListener(this::btnCariActionPerformed);
 
         jComboBox2.setBackground(new java.awt.Color(240, 218, 174));
+        jComboBox2.setFont(new java.awt.Font("Arial Black", 0, 12)); // NOI18N
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Pilih Periode--", "Pilih Tanggal", "Perminggu", "Perbulan" }));
         jComboBox2.addActionListener(this::jComboBox2ActionPerformed);
 
@@ -215,8 +267,51 @@ public class Trans extends javax.swing.JInternalFrame {
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/IMG_20261102_221041.png"))); // NOI18N
 
+        btnTanggal.setBackground(new java.awt.Color(240, 218, 174));
+        btnTanggal.setFont(new java.awt.Font("Arial Black", 0, 12)); // NOI18N
         btnTanggal.setText("Pilih Tanggal");
         btnTanggal.addActionListener(this::btnTanggalActionPerformed);
+
+        jPanel2.setBackground(new java.awt.Color(178, 131, 59));
+
+        txtTabel.setBackground(new java.awt.Color(255, 255, 204));
+        txtTabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtTabel.setForeground(new java.awt.Color(80, 38, 0));
+        txtTabel.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID Transaksi", "ID Pelanggan", "Nama Pelanggan", "Tanggal Bayar", "Metode", "Total Harga", "Status"
+            }
+        ));
+        txtTabel.setGridColor(new java.awt.Color(224, 159, 74));
+        txtTabel.setRowHeight(40);
+        txtTabel.setSelectionBackground(new java.awt.Color(255, 255, 153));
+        txtTabel.setSelectionForeground(new java.awt.Color(80, 38, 0));
+        txtTabel.setShowGrid(true);
+        txtTabel.setSurrendersFocusOnKeystroke(true);
+        jScrollPane1.setViewportView(txtTabel);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
+        );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -225,37 +320,38 @@ public class Trans extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
+                        .addGap(16, 16, 16)
                         .addComponent(txtJudul)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 648, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(87, 87, 87)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 668, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
-                                .addComponent(btnCari)
-                                .addGap(101, 101, 101))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(53, 53, 53)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel5)
+                                        .addComponent(jLabel2)
                                         .addGap(18, 18, 18)
-                                        .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnCari))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(101, 101, 101)))
                 .addComponent(jLabel7))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
+                        .addGap(25, 25, 25)
                         .addComponent(txtJudul)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -263,14 +359,13 @@ public class Trans extends javax.swing.JInternalFrame {
                             .addComponent(btnCari)
                             .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnTanggal))
-                        .addGap(33, 33, 33)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addContainerGap(277, Short.MAX_VALUE))
+                .addContainerGap(188, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -333,6 +428,7 @@ public class Trans extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JLabel txtJudul;
