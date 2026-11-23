@@ -157,7 +157,7 @@ public class Pelanggan extends javax.swing.JInternalFrame {
     
     void hapus(){
         try {
-            String sql ="delete from a_pelanggan where id_Pelanggan='"+jTextField1.getText()+"'";
+            String sql ="delete from a_pelanggan where Nama_Pelanggan='"+jTextField1.getText()+"'";
             koneksidatabase cn=new koneksidatabase();
             cn.koneksi22();
             java.sql.Connection conn=koneksidatabase.con;
@@ -468,6 +468,7 @@ public class Pelanggan extends javax.swing.JInternalFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         cari();
+        tampil();
         bersihlayar();
     }//GEN-LAST:event_jButton2ActionPerformed
 

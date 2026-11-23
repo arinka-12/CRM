@@ -127,7 +127,7 @@ public class Detail extends javax.swing.JInternalFrame {
         aturscroll();
     }
     
-        private void aturHeaderTabel() {
+    private void aturHeaderTabel() {
         txttabel.getTableHeader().setDefaultRenderer(new RoundedHeaderRenderer());
         txttabel.getTableHeader().setPreferredSize(new java.awt.Dimension(0, 40));
         txttabel.getTableHeader().setReorderingAllowed(false);
@@ -138,6 +138,8 @@ public class Detail extends javax.swing.JInternalFrame {
             // 1. Hapus border luar JScrollPane dan Viewport
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder());
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        jScrollPane3.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder());
 
         // 2. Hilangkan border bawaan JTableHeader
         txttabel.getTableHeader().setBorder(javax.swing.BorderFactory.createEmptyBorder());
@@ -147,6 +149,7 @@ public class Detail extends javax.swing.JInternalFrame {
         javax.swing.JPanel corner = new javax.swing.JPanel();
         corner.setBackground(new Color(178, 131, 59)); // Sesuaikan dengan warna RGB panel luar
         jScrollPane1.setCorner(javax.swing.JScrollPane.UPPER_RIGHT_CORNER, corner);
+        jScrollPane3.setCorner(javax.swing.JScrollPane.UPPER_RIGHT_CORNER, corner);
     }
     
     private javax.swing.JPanel buatSudut(java.awt.Color warna) {
@@ -192,8 +195,45 @@ public class Detail extends javax.swing.JInternalFrame {
             return button;
         }
     });
+        jScrollPane3.getVerticalScrollBar().setUI(new javax.swing.plaf.basic.BasicScrollBarUI() {
+        @Override
+        protected void configureScrollBarColors() {
+            this.thumbColor = new java.awt.Color(115, 67, 15); // Cokelat tua
+            this.trackColor = new java.awt.Color(255, 253, 217); // Krem lembut
+        }
+        // Menggambar batang geser (thumb) dengan sudut melengkung
+        @Override
+        protected void paintThumb(java.awt.Graphics g, javax.swing.JComponent c, java.awt.Rectangle thumbBounds) {
+            if (thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
+                return;
+            }
+            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(thumbColor);
+            // Beri jarak 2px di kiri & kanan agar terlihat mengambang rapi di dalam jalur krem
+            g2.fillRoundRect(thumbBounds.x + 2, thumbBounds.y + 2, thumbBounds.width - 4, thumbBounds.height - 4, 8, 8);
+            g2.dispose();
+        }
+        // Menghilangkan tombol panah atas dan bawah
+        @Override
+        protected javax.swing.JButton createDecreaseButton(int orientation) {
+            return createZeroButton();
+        }
+        @Override
+        protected javax.swing.JButton createIncreaseButton(int orientation) {
+            return createZeroButton();
+        }
+        private javax.swing.JButton createZeroButton() {
+            javax.swing.JButton button = new javax.swing.JButton();
+            button.setPreferredSize(new java.awt.Dimension(0, 0));
+            button.setMinimumSize(new java.awt.Dimension(0, 0));
+            button.setMaximumSize(new java.awt.Dimension(0, 0));
+            return button;
+        }
+    });
     // Lebar jalur scrollbar 12px agar batang geser melengkungnya proporsional
     jScrollPane1.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(12, 0));
+    jScrollPane3.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(12, 0));
     }
     
     void id(){
@@ -273,6 +313,30 @@ public class Detail extends javax.swing.JInternalFrame {
     // Tampilkan total belanja ke kotak di sebelah tombol Bayar
     jTextField1.setText(String.valueOf(grandTotal));
     jTextField2.setText(String.valueOf(grandTotal));    
+    }
+    
+    private void bersihkanform(){
+        jComboBox1.setSelectedIndex(0);   // ComboBox -- Pilih ID Pesanan -- (sesuaikan nama variabelnya)
+        txtScan.setText("");            // Scan Barcode
+        cbProduk.setSelectedIndex(0);      // ComboBox -- Pilih Produk --
+        txtHarga.setText("");              // Harga
+        txtJumlah.setText("");             // Jumlah Produk
+        txtTotal.setText("");        // Total produk kiri
+
+        // 2. Bersihkan tabel kecil & kotak TOTAL bawah
+        DefaultTableModel modelKecil = (DefaultTableModel) txttabel.getModel();
+        modelKecil.setRowCount(0);
+        jTextField1.setText("");         // Kotak putih di samping TOTAL (125000)
+
+        // 3. Bersihkan bagian kanan (Panel Bayar)
+        jDateChooser1.setDate(new java.util.Date()); // Reset tanggal ke hari ini (atau null jika ingin kosong)
+        cbMetode.setSelectedIndex(0);
+        txtNominalBayar.setText("");
+        cbStatus.setSelectedIndex(0);
+        jTextField2.setText("");           // Kotak putih di samping tombol Simpan
+
+        // 4. Hilangkan seleksi pada tabel pembayaran bawah
+        tblPembayaran.clearSelection();
     }
     
     private void cariDataTransaksi() {
@@ -520,6 +584,7 @@ public class Detail extends javax.swing.JInternalFrame {
         cbMetode.setEditable(true);
         cbMetode.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tunai", "Qris", "Transfer" }));
 
+        txtNominalBayar.addActionListener(this::txtNominalBayarActionPerformed);
         txtNominalBayar.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNominalBayarKeyReleased(evt);
@@ -595,7 +660,7 @@ public class Detail extends javax.swing.JInternalFrame {
         );
 
         jButton1.setBackground(new java.awt.Color(157, 110, 17));
-        jButton1.setFont(new java.awt.Font("Book Antiqua", 0, 12)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Book Antiqua", 0, 15)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Ubah Status");
         jButton1.addActionListener(this::jButton1ActionPerformed);
@@ -634,6 +699,11 @@ public class Detail extends javax.swing.JInternalFrame {
                 txttabelMouseClicked(evt);
             }
         });
+        txttabel.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txttabelKeyPressed(evt);
+            }
+        });
         jScrollPane3.setViewportView(txttabel);
 
         jLabel5.setBackground(new java.awt.Color(157, 110, 17));
@@ -648,9 +718,9 @@ public class Detail extends javax.swing.JInternalFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(14, 14, 14)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -659,12 +729,14 @@ public class Detail extends javax.swing.JInternalFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(0, 81, Short.MAX_VALUE)
+                .addGap(0, 90, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         );
 
         jPanel4.setBackground(new java.awt.Color(178, 131, 59));
@@ -710,7 +782,7 @@ public class Detail extends javax.swing.JInternalFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/IMG_20261102_221041.png"))); // NOI18N
@@ -727,9 +799,6 @@ public class Detail extends javax.swing.JInternalFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(53, 53, 53)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(15, 15, 15))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -764,14 +833,16 @@ public class Detail extends javax.swing.JInternalFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton1))
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
-                                        .addComponent(jLabel6)))))))
-                .addGap(0, 5, Short.MAX_VALUE))
+                                        .addGap(0, 60, Short.MAX_VALUE)
+                                        .addComponent(jLabel6))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jButton1)
+                                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(0, 8, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -815,7 +886,7 @@ public class Detail extends javax.swing.JInternalFrame {
                         .addComponent(jButton1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(36, 36, 36))
         );
@@ -826,7 +897,7 @@ public class Detail extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 333, Short.MAX_VALUE))
+                .addGap(0, 241, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -839,7 +910,8 @@ public class Detail extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtcariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtcariActionPerformed
-        cariDataTransaksi();       
+        cariDataTransaksi(); 
+        tampilkanTransaksi();
     }//GEN-LAST:event_txtcariActionPerformed
 
     private void txttambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txttambahActionPerformed
@@ -872,6 +944,7 @@ public class Detail extends javax.swing.JInternalFrame {
             cbProduk.setSelectedIndex(0);
             txtHarga.setText("");
             txtJumlah.setText("");
+            txtTotal.setText("");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal menambahkan data ke keranjang: " + e.getMessage());
         }
@@ -923,7 +996,8 @@ public class Detail extends javax.swing.JInternalFrame {
         if (baris == -1) {
             return;
         }
-
+        DefaultTableModel modelKecil = (DefaultTableModel) txttabel.getModel();
+        modelKecil.setRowCount(0);
     try {
         // 1. Ambil data sesuai urutan 8 kolom di tabel (Indeks 0 - 7)
         String idTransaksi = tblPembayaran.getValueAt(baris, 1) != null ? tblPembayaran.getValueAt(baris, 1).toString() : "";
@@ -979,7 +1053,14 @@ public class Detail extends javax.swing.JInternalFrame {
                 StringBuilder sbNamaProduk = new StringBuilder();
                 StringBuilder sbJumlah = new StringBuilder();
                 StringBuilder sbHarga = new StringBuilder();
+                
                 while (rsDetail.next()) {
+                    String idProd = rsDetail.getString("id_produk");
+                    String namaProd = rsDetail.getString("Nama_Produk");
+                    int jml = rsDetail.getInt("Jumlah_produk");
+                    int harga = Integer.parseInt(rsDetail.getString("Harga").replace(".00", "").replaceAll("[^0-9]", ""));
+                    int subtotal = jml * harga;
+                    modelKecil.addRow(new Object[]{idProd, namaProd, jml, subtotal});
                     if (sbIdProduk.length() > 0) {
                         sbIdProduk.append(", ");
                         sbNamaProduk.append(", ");
@@ -1230,7 +1311,7 @@ public class Detail extends javax.swing.JInternalFrame {
                 ex.printStackTrace();
             }
         }
-        
+    tampilkanTransaksi();    
     }//GEN-LAST:event_txtsimpanActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
@@ -1416,6 +1497,7 @@ public class Detail extends javax.swing.JInternalFrame {
     }
     String idTransaksi = tblPembayaran.getValueAt(baris, 1).toString();
     String nominalBayar = txtNominalBayar.getText();
+    String totalharga = jTextField1.getText();
     String metode = cbMetode.getSelectedItem().toString();
     String status = cbStatus.getSelectedItem().toString();
 
@@ -1425,6 +1507,7 @@ public class Detail extends javax.swing.JInternalFrame {
 
         String sql = "UPDATE transaksi SET "
                 + "Tanggalbayar = ?, "
+                + "Total_harga = ?, "
                 + "Nominal_bayar = ?, "
                 + "Metode_pembayaran = ?, "
                 + "Status_pembayaran = ? "
@@ -1433,30 +1516,51 @@ public class Detail extends javax.swing.JInternalFrame {
         java.sql.PreparedStatement pst =
                 koneksidatabase.con.prepareStatement(sql);
         pst.setDate(1, new java.sql.Date(System.currentTimeMillis()));
-        pst.setBigDecimal(2, new java.math.BigDecimal(nominalBayar));
-        pst.setString(3, metode);
-        pst.setString(4, status);
-        pst.setString(5, idTransaksi);
+        pst.setBigDecimal(2, new java.math.BigDecimal(totalharga));
+        pst.setBigDecimal(3, new java.math.BigDecimal(nominalBayar));
+        pst.setString(4, metode);
+        pst.setString(5, status);
+        pst.setString(6, idTransaksi);
         pst.executeUpdate();
         JOptionPane.showMessageDialog(this, "Data transaksi berhasil diubah!");
 
-        pst.close();
         tampilkanTransaksi();
+        pst.close();
+        bersihkanform();
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this,
                 "Gagal mengubah data: " + e.getMessage());
     }
+    tampilkanTransaksi();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txttabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txttabelMouseClicked
         // TODO add your handling code here:
+        int baris = txttabel.getSelectedRow();
+    if (baris != -1) {
+        String idProd = txttabel.getValueAt(baris, 0).toString();
+        String namaProd = txttabel.getValueAt(baris, 1).toString();
+        String jml = txttabel.getValueAt(baris, 2).toString();
+        int subtotal = Integer.parseInt(txttabel.getValueAt(baris, 3).toString());
+        int hargaSatuan = subtotal / Integer.parseInt(jml);
+
+        // Pilih produk di ComboBox (sesuaikan nama variabel cbProduk Anda)
+        for (int i = 0; i < cbProduk.getItemCount(); i++) {
+            if (cbProduk.getItemAt(i).toString().startsWith(idProd)) {
+                cbProduk.setSelectedIndex(i);
+                break;
+            }
+        }
+        txtHarga.setText(String.valueOf(hargaSatuan));
+        txtJumlah.setText(jml);
+        txtTotal.setText(String.valueOf(subtotal));
+    }
     }//GEN-LAST:event_txttabelMouseClicked
 
     private void txtScanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtScanActionPerformed
         // TODO add your handling code here:
         String barcode = txtScan.getText().trim();
-
         if (barcode.isEmpty()) {
             return;
         }
@@ -1469,24 +1573,18 @@ public class Detail extends javax.swing.JInternalFrame {
             cn.koneksi22();
             java.sql.PreparedStatement pst =
                 koneksidatabase.con.prepareStatement(sql);
-
             pst.setString(1, barcode);
-
             java.sql.ResultSet rs = pst.executeQuery();
-
             if (rs.next()) {
-
                 String idProduk = rs.getString("id_produk");
                 String namaProduk = rs.getString("Nama_Produk");
                 String harga = rs.getString("Harga");
-
                 // Pilih produk secara otomatis di ComboBox
                 cbProduk.setSelectedItem(idProduk + " - " + namaProduk);
                 // Isi harga secara otomatis
                 txtHarga.setText(harga);
                 // Arahkan kursor ke jumlah
                 txtJumlah.requestFocus();
-
             } else {
                 javax.swing.JOptionPane.showMessageDialog(
                     this,
@@ -1536,6 +1634,29 @@ public class Detail extends javax.swing.JInternalFrame {
         // Abaikan jika input belum lengkap
     }
     }//GEN-LAST:event_txtNominalBayarKeyReleased
+
+    private void txttabelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txttabelKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_DELETE) {
+        int baris = txttabel.getSelectedRow();
+        if (baris != -1) {
+            DefaultTableModel model = (DefaultTableModel) txttabel.getModel();
+            model.removeRow(baris);
+            
+            // Hitung ulang total keseluruhan setelah baris dihapus
+            int totalBaru = 0;
+            for (int i = 0; i < model.getRowCount(); i++) {
+                totalBaru += Integer.parseInt(model.getValueAt(i, 3).toString().replaceAll("[^0-9]", ""));
+            }
+            // Update kotak TOTAL (ganti jTextField1 jika nama variabel kotak TOTAL berbeda)
+            jTextField1.setText(String.valueOf(totalBaru));
+        }
+    }
+    }//GEN-LAST:event_txttabelKeyPressed
+
+    private void txtNominalBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNominalBayarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNominalBayarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

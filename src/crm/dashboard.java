@@ -49,8 +49,7 @@ public class dashboard extends javax.swing.JInternalFrame {
         jTable1.setGridColor(new java.awt.Color(220, 200, 180));
         
         jScrollPane1.setVerticalScrollBarPolicy(
-    javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
-);
+        javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         
         hitungTotalPelanggan();
         hitungTotalProduk();
@@ -466,7 +465,7 @@ public class dashboard extends javax.swing.JInternalFrame {
             jTable1.getColumnModel().getColumn(1).setPreferredWidth(80);
             jTable1.getColumnModel().getColumn(2).setPreferredWidth(160);
             jTable1.getColumnModel().getColumn(3).setPreferredWidth(160);
-            jTable1.getColumnModel().getColumn(4).setPreferredWidth(80);
+            jTable1.getColumnModel().getColumn(4).setPreferredWidth(92);
             jTable1.getColumnModel().getColumn(5).setPreferredWidth(100);
         }
 

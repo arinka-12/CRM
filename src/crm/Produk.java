@@ -542,6 +542,7 @@ private java.io.File fileGambarTerpilih = null;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
+    kosongkan_form();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -687,64 +688,18 @@ private java.io.File fileGambarTerpilih = null;
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-
-
     int baris = jTable1.getSelectedRow();
-
     jTextField1.setText(
             jTable1.getValueAt(baris, 1).toString());
-
     jTextField2.setText(
             jTable1.getValueAt(baris, 2).toString());
-
     jComboBox1.setSelectedItem(
             jTable1.getValueAt(baris, 3).toString());
-
     jTextField4.setText(
             jTable1.getValueAt(baris, 4).toString());
+    jTextField3.setText(
+            jTable1.getValueAt(baris, 5).toString());
     
-    // TAMBAHKAN KODE DI BAWAH INI UNTUK MENAMPILKAN GAMBAR KE jLabel8:
-    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0);
-
-    try {
-        String keyword = "%" + jTextField1.getText() + "%";
-
-        String sql = "SELECT * FROM b_produk "
-                + "WHERE id_produk LIKE ? "
-                + "OR Nama_Produk LIKE ? "
-                + "OR Kategori LIKE ?";
-        koneksidatabase cn=new koneksidatabase();
-        cn.koneksi22();
-        java.sql.Connection conn = koneksidatabase.con;
-        java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-
-        pst.setString(1, keyword);
-        pst.setString(2, keyword);
-        pst.setString(3, keyword);
-
-        java.sql.ResultSet res = pst.executeQuery();
- 
-        while (res.next()) {
-            model.addRow(new Object[]{
-               
-                res.getString("id_produk"),
-                res.getString("Nama_Produk"),
-                res.getString("Kategori"),
-                res.getString("Harga"),
-                
-            });
-        }
-
-        if (model.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this,
-                    "Data produk tidak ditemukan!");
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this,
-                "Gagal mencari data: " + e.getMessage());
-    }
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed

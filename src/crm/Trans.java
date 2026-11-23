@@ -22,11 +22,9 @@ public class Trans extends javax.swing.JInternalFrame {
     
     public Trans() {
         initComponents();
-        
-      
+              
         ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
-        this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));        
         
         txtTabel.getTableHeader().setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
             @Override
@@ -184,7 +182,7 @@ public class Trans extends javax.swing.JInternalFrame {
             int totalHarga = rs.getInt("Total_harga");
             
             // Masukkan data rangkuman ke baris JTable
-            model.addRow(new Object[]{idTrx, idPel, namaPel, tglBayar, metode, status, totalHarga});
+            model.addRow(new Object[]{idTrx, idPel, namaPel, tglBayar, metode, totalHarga, status});
             
             // Jumlahkan total uang masuk
             akumulasiOmzet += totalHarga;
@@ -229,6 +227,7 @@ public class Trans extends javax.swing.JInternalFrame {
         jPanel2 = new crm.RoundedPanel(20)  ;
         jScrollPane1 = new javax.swing.JScrollPane();
         txtTabel = new javax.swing.JTable();
+        jButton7 = new javax.swing.JButton();
 
         jTextField6.setText("jTextField6");
 
@@ -294,6 +293,11 @@ public class Trans extends javax.swing.JInternalFrame {
         txtTabel.setSelectionForeground(new java.awt.Color(80, 38, 0));
         txtTabel.setShowGrid(true);
         txtTabel.setSurrendersFocusOnKeystroke(true);
+        txtTabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtTabelMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(txtTabel);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -313,6 +317,13 @@ public class Trans extends javax.swing.JInternalFrame {
                 .addGap(15, 15, 15))
         );
 
+        jButton7.setBackground(new java.awt.Color(157, 110, 17));
+        jButton7.setFont(new java.awt.Font("Book Antiqua", 1, 15)); // NOI18N
+        jButton7.setForeground(new java.awt.Color(255, 255, 255));
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/20261103_090523_0000.png"))); // NOI18N
+        jButton7.setText("Hapus");
+        jButton7.addActionListener(this::jButton7ActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -324,24 +335,23 @@ public class Trans extends javax.swing.JInternalFrame {
                         .addComponent(txtJudul)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 668, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(53, 53, 53)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(53, 53, 53)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnCari))))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 357, Short.MAX_VALUE)
                                 .addComponent(jLabel5)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCari)))
                         .addGap(101, 101, 101)))
                 .addComponent(jLabel7))
         );
@@ -362,10 +372,12 @@ public class Trans extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addContainerGap(188, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtTotalOmzet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5))
+                    .addComponent(jButton7))
+                .addContainerGap(183, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -416,6 +428,28 @@ public class Trans extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnTanggalActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        try {
+            int baris = txtTabel.getSelectedRow();
+            String sql ="delete from transaksi where id_Transaksi=?";
+            koneksidatabase cn=new koneksidatabase();
+            cn.koneksi22();
+            java.sql.Connection conn=koneksidatabase.con;
+            java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+            pst.setString(1, txtTabel.getValueAt(baris, 0).toString());
+            pst.execute();
+            JOptionPane.showMessageDialog(this, "berhasil di hapus");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+        Laporan();
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void txtTabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtTabelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTabelMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
@@ -423,6 +457,7 @@ public class Trans extends javax.swing.JInternalFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.JButton jButton7;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;

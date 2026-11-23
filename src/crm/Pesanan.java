@@ -117,12 +117,11 @@ public class Pesanan extends javax.swing.JInternalFrame {
         }
     }
 
-    // === TEMPELKAN METHOD BERSIHKAN_FORM DI SINI ===
     private void bersihkan_form() {
         jComboBox1.setSelectedIndex(0); // atau txtIDPelanggan.setText(""); jika TextField
         jDateChooser1.setDate(null);
+        jDateChooser2.setDate(null);
         jComboBox2.setSelectedItem("");
-        //jTextField4.setText("");
     }
     
     void id2(){
@@ -167,7 +166,8 @@ public class Pesanan extends javax.swing.JInternalFrame {
                 return c;
             }
         });
-        
+        aturHeaderTabel();
+        aturscroll();
         ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
         this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         
@@ -175,8 +175,6 @@ public class Pesanan extends javax.swing.JInternalFrame {
         bersihkan_form(); 
         
         id2();
-        aturHeaderTabel();
-        aturscroll();
     }
 
     /**
@@ -203,6 +201,8 @@ public class Pesanan extends javax.swing.JInternalFrame {
         jTable1 = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         jDateChooser2 = new com.toedter.calendar.JDateChooser();
+        jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
 
         setBorder(null);
 
@@ -266,12 +266,17 @@ public class Pesanan extends javax.swing.JInternalFrame {
         jTable1.setSelectionBackground(new java.awt.Color(255, 255, 153));
         jTable1.setSelectionForeground(new java.awt.Color(80, 38, 0));
         jTable1.setShowGrid(true);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setPreferredWidth(40);
             jTable1.getColumnModel().getColumn(1).setPreferredWidth(90);
             jTable1.getColumnModel().getColumn(2).setPreferredWidth(120);
-            jTable1.getColumnModel().getColumn(3).setPreferredWidth(120);
+            jTable1.getColumnModel().getColumn(3).setPreferredWidth(124);
             jTable1.getColumnModel().getColumn(4).setPreferredWidth(130);
         }
 
@@ -281,8 +286,8 @@ public class Pesanan extends javax.swing.JInternalFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 587, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 579, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,6 +302,20 @@ public class Pesanan extends javax.swing.JInternalFrame {
         jLabel5.setText("Tanggal Pengambilan");
 
         jDateChooser2.setBackground(new java.awt.Color(240, 218, 174));
+
+        jButton7.setBackground(new java.awt.Color(157, 110, 17));
+        jButton7.setFont(new java.awt.Font("Book Antiqua", 1, 15)); // NOI18N
+        jButton7.setForeground(new java.awt.Color(255, 255, 255));
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/20261103_090523_0000.png"))); // NOI18N
+        jButton7.setText("Hapus");
+        jButton7.addActionListener(this::jButton7ActionPerformed);
+
+        jButton8.setBackground(new java.awt.Color(157, 110, 17));
+        jButton8.setFont(new java.awt.Font("Book Antiqua", 1, 15)); // NOI18N
+        jButton8.setForeground(new java.awt.Color(255, 255, 255));
+        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo/uuuu.png"))); // NOI18N
+        jButton8.setText("Ubah");
+        jButton8.addActionListener(this::jButton8ActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -327,16 +346,24 @@ public class Pesanan extends javax.swing.JInternalFrame {
                 .addComponent(jLabel7))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(58, 58, 58)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton7)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel7)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(jLabel1)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
@@ -345,20 +372,25 @@ public class Pesanan extends javax.swing.JInternalFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDateChooser2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
+                        .addGap(0, 33, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)))
-                    .addComponent(jLabel7))
-                .addGap(10, 10, 10)
+                            .addComponent(jLabel4))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton6)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton7)
+                    .addComponent(jButton8))
+                .addGap(120, 120, 120))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -412,9 +444,86 @@ public class Pesanan extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        try {
+            int baris = jTable1.getSelectedRow();
+            if (baris == -1) {
+                JOptionPane.showMessageDialog(this, "Pilih data pesanan di tabel terlebih dahulu!");
+                return;
+            }
+
+            String idPel = jTable1.getValueAt(baris, 1).toString();
+            String tglPesan = jTable1.getValueAt(baris, 3).toString();
+
+            String sql = "DELETE FROM c_pesanan WHERE id_Pelanggan = '" + idPel + "' AND Tanggal_pesanan = '" + tglPesan + "'";
+
+            koneksidatabase cn = new koneksidatabase();
+            cn.koneksi22();
+            java.sql.Connection conn = koneksidatabase.con;
+            java.sql.PreparedStatement pst = conn.prepareStatement(sql);
+            pst.execute();
+
+            JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
+            tampilkan_data();
+            bersihkan_form();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal menghapus data: " + e.getMessage());
+        }
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        try {
+            int baris = jTable1.getSelectedRow();
+            String nimLama = jTable1.getValueAt(baris, 1).toString();
+            String idPel = jComboBox1.getSelectedItem().toString().split(" - ")[0].trim();
+            java.sql.Date tglPesan = new java.sql.Date(jDateChooser1.getDate().getTime());
+            java.sql.Date tglAmbil = new java.sql.Date(jDateChooser2.getDate().getTime());
+            String sumber = jComboBox2.getSelectedItem().toString();
+            
+            String sql = "UPDATE c_pesanan SET id_Pelanggan = '" + idPel + "', Tanggal_pesanan = '" + tglPesan + "', Tanggal_pengambilan = '" + tglAmbil + "', Sumber = '" + sumber + "' WHERE id_Pelanggan = '" + nimLama + "'";
+            koneksidatabase cn=new koneksidatabase();
+            cn.koneksi22();
+            java.sql.Connection conn=koneksidatabase.con;
+            java.sql.PreparedStatement pst=conn.prepareStatement(sql);
+            pst.execute();
+            JOptionPane.showMessageDialog(null, "data berhasil di edit");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Perubahan Data Gagal"+e.getMessage());
+        }
+        tampilkan_data();
+        bersihkan_form();
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int baris = jTable1.getSelectedRow();
+        if (baris != -1) {
+        // 1. Pilih ID Pelanggan di jComboBox1
+        String idPel = jTable1.getValueAt(baris, 1).toString();
+        for (int i = 0; i < jComboBox1.getItemCount(); i++) {
+            if (jComboBox1.getItemAt(i).toString().startsWith(idPel + " - ")) {
+                jComboBox1.setSelectedIndex(i);
+                break;
+            }
+        }}
+
+        jComboBox1.setSelectedItem(
+                jTable1.getValueAt(baris, 1).toString());
+        jDateChooser1.setDate(java.sql.Date.valueOf
+                (jTable1.getValueAt(baris, 3).toString()));
+        jDateChooser2.setDate(java.sql.Date.valueOf
+                (jTable1.getValueAt(baris, 4).toString()));
+        jComboBox2.setSelectedItem(
+                jTable1.getValueAt(baris, 5).toString());
+    }//GEN-LAST:event_jTable1MouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private com.toedter.calendar.JDateChooser jDateChooser1;
